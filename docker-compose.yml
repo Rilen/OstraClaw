@@ -1,0 +1,109 @@
+version: "3.9"
+
+# ============================================================
+#  OstraClaw — Guardião da Integridade Digital
+#  Sistema de auditoria autônoma de documentos oficiais PMRO
+# ============================================================
+
+services:
+
+  # ── Core do Agente de Auditoria ─────────────────────────
+  ostraclaw_core:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ostraclaw_core
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./data/raw:/app/input_jornais          # Pasta monitorada (input)
+      - ./data/quarantine:/app/quarantine       # Jornais suspeitos isolados
+      - ./data/processed:/app/processed        # Jornais aprovados
+      - ./data/reports:/app/reports            # Relatórios JSON/HTML
+      - ./skills:/app/skills                   # Scripts de auditoria
+      - ./config:/app/config                   # Configurações do agente
+      - ./logs:/app/logs                       # Logs persistentes
+    networks:
+      - ostraclaw_net
+    depends_on:
+      - ostraclaw_db
+    # GPU (descomente se tiver NVIDIA)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # ── Banco de Dados (referência de hashes e metadados) ───
+  ostraclaw_db:
+    image: postgres:16-alpine
+    container_name: ostraclaw_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ostraclaw}
+      POSTGRES_USER: ${POSTGRES_USER:-ostraclaw}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ostraclaw_secret}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./config/init_db.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5435:5432"
+    networks:
+      - ostraclaw_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ostraclaw}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Dashboard de Conformidade (Streamlit) ───────────────
+  ostraclaw_dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile.dashboard
+    container_name: ostraclaw_dashboard
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data/reports:/app/reports
+      - ./logs:/app/logs
+      - ./data/raw:/app/input_jornais
+    networks:
+      - ostraclaw_net
+    depends_on:
+      - ostraclaw_db
+
+  # ── Ollama LLM Local (privacidade total, sem API externa) ─
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ostraclaw_llm
+    restart: unless-stopped
+    volumes:
+      - ollama_models:/root/.ollama
+    ports:
+      - "11434:11434"
+    networks:
+      - ostraclaw_net
+    # GPU (descomente se tiver NVIDIA)
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: all
+    #           capabilities: [gpu]
+
+volumes:
+  postgres_data:
+  ollama_models:
+
+networks:
+  ostraclaw_net:
+    driver: bridge

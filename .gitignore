@@ -1,0 +1,39 @@
+# ============================================================
+#  OstraClaw — .gitignore
+# ============================================================
+
+# Ambiente
+.env
+*.env.local
+
+# Dados sensíveis (nunca commitar PDFs)
+data/raw/*.pdf
+data/quarantine/
+data/processed/
+data/reports/
+logs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+*.egg-info/
+dist/
+build/
+
+# Docker volumes
+postgres_data/
+ollama_models/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
