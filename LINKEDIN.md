@@ -1,6 +1,6 @@
 🚀 **Anunciando o OpenClaw: Inteligência Artificial Local na Luta Contra Fraudes Documentais no Setor Público!** 🦞🛡️
 
-É com muito orgulho que compartilho a versão 1.7.0 (Stable Release) do **OpenClaw (antigo OstraClaw)**, um projeto *Open Source* focado em "Civic-Tech" (Tecnologia Cívica) que construímos do zero para atuar como o **Guardião da Integridade Digital** de publicações oficiais (como Jornais, Decretos e Leis).
+É com muito orgulho que compartilho a versão 1.7.0 (Stable Release) do **OstraClaw (do código OpenSource OpenClaw)**, um projeto *Open Source* focado em "Civic-Tech" (Tecnologia Cívica) que construímos do zero para atuar como o **Guardião da Integridade Digital** de publicações oficiais (como Jornais, Decretos e Leis).
 
 Vivemos em uma era onde adulterar um PDF (seja uma licitação, uma portaria ou um decreto) leva poucos segundos. Como garantir que o documento que a população e os sistemas de IA estão lendo é, de fato, o original? 
 
