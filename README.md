@@ -1,4 +1,4 @@
-# 🦞 OpenClaw (Antigo OstraClaw) — O Guardião da Integridade Digital
+# 🦞 OstraClaw (OpenSource OpenClaw) — O Guardião da Integridade Digital
 
 > **Projeto:** Sistema autônomo open-source de auditoria e detecção de fraudes em documentos governamentais (focado inicialmente na PMRO).  
 > **Versão:** 1.7.0 (Stable release)  
